@@ -1,21 +1,23 @@
-name: Unpack Ma3koum project
+name: Publish Ma3koum project
 
 on:
-  push:
-    branches:
-      - main
+  pull_request_target:
+    types:
+      - opened
 
 permissions:
   contents: write
 
 jobs:
-  unpack:
+  publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
+      - name: Check out main
         uses: actions/checkout@v4
+        with:
+          ref: main
 
-      - name: Rebuild and unpack project
+      - name: Rebuild and publish project
         shell: bash
         run: |
           set -euo pipefail
@@ -25,10 +27,10 @@ jobs:
           unzip -q project.zip -d extracted
           cp -a extracted/Ma3koum-main/. .
           rm -rf .upload project.b64 project.zip extracted
-          rm -f .github/workflows/unpack-project.yml .publish-trigger
+          rm -f .github/workflows/unpack-project.yml .publish-trigger .publish-trigger-2
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "Publish Ma3koum project"
-          git push
+          git push origin main
