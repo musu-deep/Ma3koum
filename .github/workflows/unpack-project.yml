@@ -1,0 +1,36 @@
+name: Unpack Ma3koum project
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/unpack-project.yml
+
+permissions:
+  contents: write
+
+jobs:
+  unpack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Rebuild and unpack project
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .upload/chunk-* > project.b64
+          base64 --decode project.b64 > project.zip
+          mkdir extracted
+          unzip -q project.zip -d extracted
+          cp -a extracted/Ma3koum-main/. .
+          rm -rf .upload project.b64 project.zip extracted
+          rm -f .github/workflows/unpack-project.yml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish Ma3koum project"
+          git push
