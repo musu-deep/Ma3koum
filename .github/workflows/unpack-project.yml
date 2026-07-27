@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - .github/workflows/unpack-project.yml
 
 permissions:
   contents: write
@@ -27,7 +25,7 @@ jobs:
           unzip -q project.zip -d extracted
           cp -a extracted/Ma3koum-main/. .
           rm -rf .upload project.b64 project.zip extracted
-          rm -f .github/workflows/unpack-project.yml
+          rm -f .github/workflows/unpack-project.yml .publish-trigger
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
